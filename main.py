@@ -22,6 +22,7 @@ COLOR_YELLOW = "\033[93m"
 COLOR_GREEN = "\033[92m"
 COLOR_BLUE = "\033[94m"
 COLOR_RED = "\033[91m"  # For highlighting the best option
+COLOR_GRAY = "\033[90m"  # Subtle gray color for opening messages
 HIGHLIGHT_TITLE = "\033[1;4;91m"  # Bold and underline in red
 
 def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock2_price, stock2_shares, tax_percentage, target_amount):
@@ -73,16 +74,18 @@ def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock
             total_net_value = net_value_stock1 + net_value_stock2
             balanced_recommendations.append((shares_to_sell1_needed, shares_to_sell2, percentage1_needed, percentage, net_value_stock1, net_value_stock2, total_net_value))
 
-    # Find the best balanced recommendation
-    best_combination = max(balanced_recommendations, key=lambda x: x[6], default=None)
+    # Find the best balanced recommendation by minimizing the difference between percentages
+    if balanced_recommendations:
+        best_combination = min(balanced_recommendations, key=lambda x: abs(x[2] - x[3]))
+    else:
+        best_combination = None
 
     # Print balanced recommendations
     separator = "-" * 70
     print(f"{HIGHLIGHT_TITLE}{opening_title}{COLOR_RESET}\n")
-    print(f"{opening_message}{COLOR_RESET}")
-    print(separator)
+    print(f"{COLOR_GRAY}{opening_message}{COLOR_RESET}\n{separator}")
 
-    print(f"{COLOR_GREEN}🔄 Recommended balanced sales combinations:{COLOR_RESET}")
+    print(f"{COLOR_GREEN}✅ Recommended balanced sales combinations:{COLOR_RESET}")
     print(separator)
     for i, (shares1, shares2, percent1, percent2, net_value1, net_value2, total_net_value) in enumerate(balanced_recommendations, 1):
         if (shares1, shares2, percent1, percent2, net_value1, net_value2, total_net_value) == best_combination:
@@ -95,7 +98,7 @@ def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock
     print("\n" + separator)
     print(f"{COLOR_BLUE}📉 Combinations starting with smaller percentages of {stock1_name} sales:{COLOR_RESET}")
     print(separator)
-    best_stock1_combination = max(stock1_combinations.values(), key=lambda x: x[4] + x[5] if x[6] else 0)
+    best_stock1_combination = min(stock1_combinations.values(), key=lambda x: abs(x[2] - x[3]) if x[6] else float('inf'))
     for i, (percentage, comb) in enumerate(stock1_combinations.items(), 1):
         shares1, shares2, percent1, percent2, net_value1, net_value2, sufficient = comb
         if comb == best_stock1_combination:
@@ -112,7 +115,7 @@ def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock
     print("\n" + separator)
     print(f"{COLOR_BLUE}📈 Combinations starting with smaller percentages of {stock2_name} sales:{COLOR_RESET}")
     print(separator)
-    best_stock2_combination = max(stock2_combinations.values(), key=lambda x: x[4] + x[5] if x[6] else 0)
+    best_stock2_combination = min(stock2_combinations.values(), key=lambda x: abs(x[2] - x[3]) if x[6] else float('inf'))
     for i, (percentage, comb) in enumerate(stock2_combinations.items(), 1):
         shares1, shares2, percent1, percent2, net_value1, net_value2, sufficient = comb
         if comb == best_stock2_combination:
@@ -125,7 +128,6 @@ def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock
             print(f"{highlight}{i}. Stock 2: {percent2:.2f}% {stock2_name} ({shares2} shares, ${net_value2:,.2f}) + {percent1:.2f}% of {stock1_name} ({shares1} shares, ${net_value1:,.2f}) - Net Value: ${net_value1 + net_value2:,.2f}{COLOR_RESET}")
         else:
             print(f"{highlight}{i}. Stock 2: {percent2:.2f}% {stock2_name} ({shares2} shares) + {percent1:.2f}% of {stock1_name} ({shares1} shares) - Insufficient to meet target{COLOR_RESET}")
-
 
 # Example usage
 calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock2_price, stock2_shares, tax_percentage, target_amount)
