@@ -67,14 +67,14 @@ def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock
     # Print balanced recommendations
     separator = "-" * 70
     print("\n" + separator)
-    print("Recommended balanced sales combinations:")
+    print("✅ Recommended balanced sales combinations:")
     print(separator)
     for i, (shares1, shares2, percent1, percent2, net_value1, net_value2, total_net_value) in enumerate(balanced_recommendations, 1):
-        print(f"{i}. Stock 1: {percent1:.2f}% {stock1_name} ({shares1} shares, ${net_value1:,.2f}) + {percent2:.2f}% of {stock2_name} ({shares2} shares, ${net_value2:,.2f}) - Total Net Value: ${total_net_value:,.2f}")
+        print(f"{i}. Stock 1: {percent1:.2f}% {stock1_name} ({shares1} shares, ${net_value1:,.2f}) + {percent2:.2f}% of {stock2_name} ({shares2} shares, ${net_value2:,.2f}) - Total Net Value: ${total_net_value:,.2f} 💰")
 
     # Output other combinations
     print("\n" + separator)
-    print(f"Combinations starting with smaller percentages of {stock1_name} sales:")
+    print(f"📉 Combinations starting with smaller percentages of {stock1_name} sales:")
     print(separator)
     for i, (percentage, comb) in enumerate(stock1_combinations.items(), 1):
         shares1, shares2, percent1, percent2, net_value1, net_value2, sufficient = comb
@@ -84,7 +84,7 @@ def calculate_sales(stock1_name, stock1_price, stock1_shares, stock2_name, stock
             print(f"{i}. Stock 1: {percent1:.2f}% {stock1_name} ({shares1} shares) + {percent2:.2f}% of {stock2_name} ({shares2} shares) - Insufficient to meet target")
 
     print("\n" + separator)
-    print(f"Combinations starting with smaller percentages of {stock2_name} sales:")
+    print(f"📈 Combinations starting with smaller percentages of {stock2_name} sales:")
     print(separator)
     for i, (percentage, comb) in enumerate(stock2_combinations.items(), 1):
         shares1, shares2, percent1, percent2, net_value1, net_value2, sufficient = comb
